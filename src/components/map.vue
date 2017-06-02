@@ -7,6 +7,14 @@ import L from 'leaflet'
 import 'leaflet-hash'
 import 'leaflet/dist/leaflet.css'
 
+delete L.Icon.Default.prototype._getIconUrl
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+})
+
 function createMap () {
   var map = L.map('map').setView([46.920, 3.186], 6)
 
@@ -25,11 +33,28 @@ function createMap () {
 
 export default {
   name: 'map-view',
+  props: {
+    coordinates: Array
+  },
   data () {
-    return {}
+    return {
+      map: null,
+      marker: null
+    }
   },
   mounted () {
-    createMap()
+    this.map = createMap()
+  },
+  watch: {
+    coordinates () {
+      if (this.marker) {
+        this.map.removeLayer(this.marker)
+        this.marker = null
+      }
+      let latLng = [this.coordinates[1], this.coordinates[0]]
+      this.marker = L.marker(latLng).addTo(this.map)
+      this.map.flyTo(latLng, 15)
+    }
   }
 }
 </script>
