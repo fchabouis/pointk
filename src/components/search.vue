@@ -1,7 +1,7 @@
 <template>
   <div>
     <label>Saisir un axe routier <em>national</em>
-      <input v-model="selectedRoad" list="roads-datalist" placeholder="Par exemple « A 6 »"/>
+      <input v-model="selectedRoad" list="roads-datalist" placeholder="Par exemple « A6 »"/>
       <datalist id="roads-datalist">
         <option v-for="(moo, road) in roads"> {{road}} </option>
       </datalist>
@@ -34,7 +34,7 @@ import Papa from 'papaparse'
 
 function cleanRoadName (roadName) {
   if (roadName) {
-    return roadName.replace(/(^[AN])0+(.+$)/, '$1 $2')
+    return roadName.replace(/(^[AN])0+(.+$)/, '$1$2')
   } else {
     return roadName
   }
