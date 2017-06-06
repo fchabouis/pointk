@@ -92,8 +92,8 @@ export default {
         if (u && v) {
           let ratio = u.pk !== v.pk ? (this.pointk - u.pk) / (v.pk - u.pk) : 0
 
-          return [ratio * u.lon + (1 - ratio) * v.lon,
-            ratio * u.lat + (1 - ratio) * v.lat]
+          return [u.lon + ratio * (v.lon - u.lon),
+            u.lat + ratio * (v.lat - u.lat)]
         }
       }
     }
