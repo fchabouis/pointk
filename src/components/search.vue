@@ -70,9 +70,9 @@ export default {
     },
     nearests () {
       if (this.validPk) {
-        let lower = this.pointsk.find(el => el.pk === Math.floor(this.pointk))
-        let upper = this.pointsk.find(el => el.pk >= this.pointk)
-        return [lower, upper]
+        let upperIndex = this.pointsk.findIndex(el => el.pk >= this.pointk)
+        let lowerIndex = Math.max(0, upperIndex - 1)
+        return [this.pointsk[lowerIndex], this.pointsk[upperIndex]]
       }
     },
     lowerBoundPk () {
