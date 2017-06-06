@@ -145,6 +145,10 @@ export default {
       if (this.validPk) {
         this.$emit('newCoord', this.coordinates)
       }
+    },
+    selectedRoad () {
+      this.selectedSide = null
+      this.pointk = null
     }
   }
 }
