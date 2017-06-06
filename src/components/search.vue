@@ -59,7 +59,7 @@ export default {
       return !!this.road
     },
     validPk () {
-      return this.validRoad && this.selectedSide && this.pointk &&
+      return this.validRoad && this.selectedSide && (this.pointk !== null) &&
              this.pointk >= this.lowerBoundPk && this.pointk <= this.upperBoundPk
     },
     road () {
