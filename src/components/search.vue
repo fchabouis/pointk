@@ -19,7 +19,7 @@
         <span class="label-body">
           Entre {{this.lowerBoundPk}} et {{this.upperBoundPk}}
         </span><br/>
-        <input @input="pointkSelected" v-model.number="pointk" type="number"/>
+        <input v-model.number="pointk" type="number"/>
       </label>
       <div v-if="validPk">
         <strong>Longitude&nbsp;:</strong> {{coordinates[0]}}<br/>
@@ -138,8 +138,10 @@ export default {
         download: true,
         complete: this.parseResult
       })
-    },
-    pointkSelected () {
+    }
+  },
+  watch: {
+    coordinates () {
       if (this.validPk) {
         this.$emit('newCoord', this.coordinates)
       }
