@@ -21,10 +21,14 @@
         </span><br/>
         <input v-model.number="pointk" type="number"/>
       </label>
-      <div v-if="validPk">
-        <strong>Longitude&nbsp;:</strong> {{coordinates[0]}}<br/>
-        <strong>Latitude&nbsp;:</strong> {{coordinates[1]}}<br/>
+      <div v-if="validPk" v-for="coord in coordinates">
+        <p>
+          <strong>Longitude&nbsp;:</strong> {{coord.lng}} <br/>
+          <strong>Latitude&nbsp;:</strong> {{coord.lat}} <br/>
+          <strong>Département&nbsp;:</strong> {{coord.departement}}
+        </p>
       </div>
+      <div v-if="!ok">{{reason}}</div>
     </div>
 </div>
 </template>
@@ -32,7 +36,7 @@
 <script>
 import Papa from 'papaparse'
 
-function cleanRoadName (roadName) {
+function cleanRoadName (roadName, dep) {
   if (roadName) {
     return roadName.replace(/(^[AN])0+(.+$)/, '$1$2')
   } else {
@@ -70,32 +74,49 @@ export default {
     },
     nearests () {
       if (this.validPk) {
-        let upperIndex = this.pointsk.findIndex(el => el.pk >= this.pointk)
-        let lowerIndex = Math.max(0, upperIndex - 1)
-        return [this.pointsk[lowerIndex], this.pointsk[upperIndex]]
+        return [this.pointsk[Math.floor(this.pointk)],
+          this.pointsk[Math.ceil(this.pointk)]]
       }
     },
     lowerBoundPk () {
       if (this.validRoad && this.selectedSide) {
-        return this.pointsk[0].pk
+        return Math.min(...Object.keys(this.pointsk).map(x => parseInt(x)))
       }
     },
     upperBoundPk () {
       if (this.validRoad && this.selectedSide) {
-        return this.pointsk[this.pointsk.length - 1].pk
+        return Math.max(...Object.keys(this.pointsk).map(x => parseInt(x)))
       }
     },
     coordinates () {
+      let result = []
       if (this.validPk) {
         let u = this.nearests[0]
         let v = this.nearests[1]
         if (u && v) {
-          let ratio = u.pk !== v.pk ? (this.pointk - u.pk) / (v.pk - u.pk) : 0
-
-          return [u.lon + ratio * (v.lon - u.lon),
-            u.lat + ratio * (v.lat - u.lat)]
+          if (u.length === 1 && v.length === 1) {
+            u = u[0]
+            v = v[0]
+            let ratio = u.pk !== v.pk ? (this.pointk - u.pk) / (v.pk - u.pk) : 0
+            this.ok = true
+            result = [{
+              lng: u.lng + ratio * (v.lng - u.lng),
+              lat: u.lat + ratio * (v.lat - u.lat),
+              departement: u.departement
+            }]
+          } else if (Math.floor(this.pointk) === Math.ceil(this.pointk)) {
+            this.ok = true
+            result = u
+          } else {
+            this.ok = false
+            this.reason = 'Impossible d’interpoler. Utilisez une valeur pk entière'
+          }
+        } else {
+          this.ok = false
+          this.reason = 'Les coordonnées du point sont introuvables'
         }
       }
+      return result
     }
   },
   data () {
@@ -103,31 +124,30 @@ export default {
       roads: {},
       selectedRoad: null,
       selectedSide: null,
-      pointk: null
+      pointk: null,
+      ok: true,
+      reason: ''
     }
   },
   methods: {
     parseResult (results) {
       for (let row of results.data) {
-        let name = cleanRoadName(row[2])
+        let name = cleanRoadName(row[2], row[4])
         if (name && name.match(/^[AN]/)) {
           this.roads[name] = this.roads[name] || {}
           let road = this.roads[name]
           let sideName = cleanSide(row[8])
-          road[sideName] = road[sideName] || []
+          road[sideName] = road[sideName] || {}
           let side = road[sideName]
-          side.push({
-            pk: parseInt(row[3]),
-            lon: parseFloat(row[0]),
-            lat: parseFloat(row[1])
+          let pk = row[3]
+          side[pk] = side[pk] || []
+          let pks = side[pk]
+          pks.push({
+            pk: pk,
+            lng: parseFloat(row[0]),
+            lat: parseFloat(row[1]),
+            departement: row[4]
           })
-        }
-      }
-
-      for (let road in this.roads) {
-        for (let side in this.roads[road]) {
-          let sorted = this.roads[road][side].sort((a, b) => a.pk - b.pk)
-          this.roads[road][side] = sorted
         }
       }
     },

@@ -39,7 +39,7 @@ export default {
   data () {
     return {
       map: null,
-      marker: null
+      markers: []
     }
   },
   mounted () {
@@ -47,13 +47,17 @@ export default {
   },
   watch: {
     coordinates () {
-      if (this.marker) {
-        this.map.removeLayer(this.marker)
-        this.marker = null
+      for (let marker of this.markers) {
+        this.map.removeLayer(marker)
       }
-      let latLng = [this.coordinates[1], this.coordinates[0]]
-      this.marker = L.marker(latLng).addTo(this.map)
-      this.map.flyTo(latLng, 15)
+      this.markers = []
+
+      for (let latLng of this.coordinates) {
+        this.markers.push(L.marker(latLng).addTo(this.map))
+      }
+      if (this.coordinates.length > 0) {
+        this.map.flyToBounds(this.coordinates, 15)
+      }
     }
   }
 }
