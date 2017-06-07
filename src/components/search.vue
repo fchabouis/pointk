@@ -6,7 +6,7 @@
         <option v-for="(moo, road) in roads"> {{road}} </option>
       </datalist>
     </label>
-    <div v-if="validRoad">
+    <div v-if="road">
       <label>Saisir le côté</label>
         <div v-for="(moo, side) in road">
           <label>
@@ -15,13 +15,13 @@
           </label>
         </div>
         </input>
-      <label> Saisir le point kilométrique<br/>
+      <label v-if="bounds"> Saisir le point kilométrique<br/>
         <span class="label-body">
-          Entre {{this.lowerBoundPk}} et {{this.upperBoundPk}}
+          Entre {{bounds.lower}} et {{bounds.upper}}
         </span><br/>
         <input v-model.number="pointk" type="number"/>
       </label>
-      <div v-if="validPk" v-for="coord in coordinates">
+      <div v-for="coord in coordinates">
         <p>
           <strong>Longitude&nbsp;:</strong> {{coord.lng}} <br/>
           <strong>Latitude&nbsp;:</strong> {{coord.lat}} <br/>
@@ -59,13 +59,6 @@ export default {
     this.readPkPr()
   },
   computed: {
-    validRoad () {
-      return !!this.road
-    },
-    validPk () {
-      return this.validRoad && this.selectedSide && (this.pointk !== null) &&
-             this.pointk >= this.lowerBoundPk && this.pointk <= this.upperBoundPk
-    },
     road () {
       return this.roads[this.selectedRoad]
     },
@@ -73,24 +66,23 @@ export default {
       return this.road[this.selectedSide]
     },
     nearests () {
-      if (this.validPk) {
+      if (this.road && this.selectedSide && this.pointk) {
         return [this.pointsk[Math.floor(this.pointk)],
           this.pointsk[Math.ceil(this.pointk)]]
       }
     },
-    lowerBoundPk () {
-      if (this.validRoad && this.selectedSide) {
-        return Math.min(...Object.keys(this.pointsk).map(x => parseInt(x)))
-      }
-    },
-    upperBoundPk () {
-      if (this.validRoad && this.selectedSide) {
-        return Math.max(...Object.keys(this.pointsk).map(x => parseInt(x)))
+    bounds () {
+      if (this.road && this.selectedSide) {
+        let pks = Object.keys(this.pointsk).map(x => parseInt(x))
+        return {
+          lower: Math.min(...pks),
+          upper: Math.max(...pks)
+        }
       }
     },
     coordinates () {
       let result = []
-      if (this.validPk) {
+      if (this.nearests) {
         let u = this.nearests[0]
         let v = this.nearests[1]
         if (u && v) {
@@ -162,9 +154,7 @@ export default {
   },
   watch: {
     coordinates () {
-      if (this.validPk) {
-        this.$emit('newCoord', this.coordinates)
-      }
+      this.$emit('newCoord', this.coordinates)
     },
     selectedRoad () {
       this.selectedSide = null
