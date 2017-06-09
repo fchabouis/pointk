@@ -79,6 +79,7 @@ export default {
     #map {
       position: static;
       width: 100%;
+      height: 90%;
     }
   }
 </style>
