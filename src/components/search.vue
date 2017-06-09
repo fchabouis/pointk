@@ -180,6 +180,7 @@ export default {
     padding-top: 30px;
     padding-left: 50px;
     width:40%;
+    overflow: scroll;
   }
 
   @media (max-width: 1240px) {
@@ -193,8 +194,10 @@ export default {
   @media (max-width: 750px) {
     #searchBar {
       position: static;
+      height: auto;
       padding-top: 2px;
       padding-left: 2px;
+      padding-bottom: 10px;
       width:100%;
     }
   }
