@@ -46,7 +46,7 @@ function cleanRoadName (roadName, dep) {
 
 function cleanSide (side) {
   let map = {
-    D: 'Droite',
+    D: 'Droit',
     G: 'Gauche',
     I: 'Inconnu'
   }
