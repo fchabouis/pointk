@@ -22,12 +22,14 @@
         </span><br/>
         <input v-model.number="pointk" type="number"/>
       </label>
+      <hr>
       <div v-for="coord in coordinates">
         <p>
-          <strong>Longitude&nbsp;:</strong> {{coord.lng}} <br/>
-          <strong>Latitude&nbsp;:</strong> {{coord.lat}} <br/>
+          <strong>Longitude&nbsp;:</strong> <input class="coord" v-on:click="selectEl($event)" readonly :value="coord.lng"><br/>
+          <strong>Latitude&nbsp;:</strong> <input class="coord" v-on:click="selectEl($event)" readonly :value="coord.lat"><br/>
           <strong>Département&nbsp;:</strong> {{coord.departement}}
         </p>
+        <hr>
       </div>
       <div v-if="!ok">{{reason}}</div>
     </div>
@@ -151,6 +153,9 @@ export default {
         download: true,
         complete: this.parseResult
       })
+    },
+    selectEl (event) {
+      event.target.select()
     }
   },
   watch: {
@@ -192,5 +197,8 @@ export default {
       padding-left: 2px;
       width:100%;
     }
+  }
+  .coord {
+    border: none;
   }
 </style>
