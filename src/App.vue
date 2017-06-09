@@ -1,12 +1,7 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <MapView :coordinates="coordinates" class="eight columns"></MapView>
-      <div class="four columns">
-        <h2> Points kilométriques </h2>
-        <Search v-on:newCoord="newCoord"></Search>
-      </div>
-    </div>
+  <div id="App">
+    <Search v-on:newCoord="newCoord"></Search>
+    <MapView :coordinates="coordinates"></MapView>
 </div>
 </template>
 
@@ -32,7 +27,8 @@ export default {
 </script>
 
 <style>
-.container, .row {
+#App {
   height: 100%;
+  width: 100%;
 }
 </style>

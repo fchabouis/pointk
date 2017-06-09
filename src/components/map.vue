@@ -66,5 +66,19 @@ export default {
 <style>
 #map {
   height: 100%;
+  width: 60%;
 }
+
+  @media (max-width: 1240px) {
+    #map {
+      width: 40%;
+    }
+  }
+
+  @media (max-width: 750px) {
+    #map {
+      position: static;
+      width: 100%;
+    }
+  }
 </style>

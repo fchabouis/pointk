@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div id="searchBar">
+    <h2> Points kilométriques </h2>
     <label>Saisir un axe routier <em>national</em>
       <input v-model="selectedRoad" list="roads-datalist" placeholder="Par exemple « A6 »"/>
       <datalist id="roads-datalist">
@@ -163,3 +164,33 @@ export default {
   }
 }
 </script>
+
+<style>
+  #searchBar {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    box-sizing: border-box;
+    height: 100%;
+    padding-top: 30px;
+    padding-left: 50px;
+    width:40%;
+  }
+
+  @media (max-width: 1240px) {
+    #searchBar {
+      padding-top: 15px;
+      padding-left: 10px;
+      width:60%;
+    }
+  }
+
+  @media (max-width: 750px) {
+    #searchBar {
+      position: static;
+      padding-top: 2px;
+      padding-left: 2px;
+      width:100%;
+    }
+  }
+</style>
