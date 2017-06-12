@@ -1,26 +1,26 @@
 <template>
   <div id="searchBar">
     <h2> Points kilométriques </h2>
-    <label>Saisir un axe routier <em>national</em>
-      <input v-model="selectedRoad" list="roads-datalist" placeholder="Par exemple « A6 »"/>
+    <label>Saisir un axe routier national</label>
+      <input class="myinputs" v-model="selectedRoad" type="search" list="roads-datalist" placeholder="Par exemple « A6 »"/>
       <datalist id="roads-datalist">
         <option v-for="(moo, road) in roads"> {{road}} </option>
       </datalist>
     </label>
     <div v-if="road">
+      </br>
       <label>Saisir le côté</label>
         <div v-for="(moo, side) in road">
-          <label>
             <input :id="side" :value="side" type="radio" v-model="selectedSide"/>
-            <span class="label-body" :for="side">{{side}}</span>
-          </label>
+            <label class="label-body" :for="side"> {{side}} </label>
         </div>
         </input>
+      </br>
       <label v-if="bounds"> Saisir le point kilométrique<br/>
         <span class="label-body">
           Entre {{bounds.lower}} et {{bounds.upper}}
         </span><br/>
-        <input v-model.number="pointk" type="number"/>
+        <input class="myinputs" v-model.number="pointk" type="number"/>
       </label>
       <hr>
       <div v-for="coord in coordinates">
@@ -110,6 +110,10 @@ export default {
           this.ok = false
           this.reason = 'Les coordonnées du point sont introuvables'
         }
+      }
+      for (let res of result) {
+        res.lng = Math.round(res.lng * 1000000) / 1000000
+        res.lat = Math.round(res.lat * 1000000) / 1000000
       }
       return result
     }
@@ -203,5 +207,29 @@ export default {
   }
   .coord {
     border: none;
+  }
+  h2 {
+    padding-bottom: 10px;
+    color: #0084FFFF;
+  }
+  label {
+    font-size: 18px;
+    font-weight: normal;
+  }
+  .myinputs {
+    border: 1px solid #0084FFFF !important;
+  }
+  input[type="radio"]+label {
+    display: inline-block;
+    color:#7C7C7CFF;
+  }
+  input[type="radio"]:checked+label {
+    color: #0084FFFF;
+  }
+  ::selection {
+    background: #70AEFFFF;
+  }
+  ::-moz-selection {
+    background: #70AEFFFF;
   }
 </style>
